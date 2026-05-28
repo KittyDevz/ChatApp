@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bun install *)",
+      "Bash(bun run *)",
+      "Bash(echo \"PID: $!\")",
+      "Bash(curl -s http://localhost:3002/)",
+      "Bash(mkdir -p \"C:\\\\Users\\\\kk_45\\\\Desktop\\\\chat-server\\\\.claude\")",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(fuser -k 3001/tcp)",
+      "Bash(pkill -f \"bun run index.ts\")"
+    ]
+  }
+}
