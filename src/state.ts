@@ -5,6 +5,18 @@ export const banned       = new Set<string>()  // lowercased usernames
 export const typing       = new Set<string>()  // currently typing
 export const typingTimers = new Map<string, ReturnType<typeof setTimeout>>()
 
+export interface BotInfo {
+  username: string
+  isAdmin:  boolean
+  isBot:    true
+}
+
+/** Virtual bot members (server-side, no WebSocket) */
+export const bots = new Set<BotInfo>()
+
+/** Usernames (lowercase) that have DJ music-control rights */
+export const djUsers = new Set<string>()
+
 export function getMember(username: string): Member | undefined {
   for (const m of members) if (m.username === username) return m
 }

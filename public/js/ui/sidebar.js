@@ -16,21 +16,32 @@ const bannedListEl  = document.getElementById('banned-list')
  * @param {function} sendFn          – ws.send wrapper for admin actions
  */
 export function updateUserList(users, bannedArr, sendFn) {
-  onlineCountEl.textContent = users.length
+  // Count only real users (not bots) for the online counter
+  const realCount = users.filter(u => !u.isBot).length
+  onlineCountEl.textContent = realCount
   userListEl.innerHTML = ''
 
-  for (const { username, isAdmin } of users) {
+  for (const { username, isAdmin, isBot } of users) {
     const li = document.createElement('li')
-    li.appendChild(makeAvatar(username, 26))
+    li.dataset.username = username
+    li.dataset.isbot    = isBot ? 'true' : 'false'
+    if (isBot) li.classList.add('bot-entry')
+    li.appendChild(makeAvatar(username, 20, isAdmin, isBot))
 
-    // Name + crown
+    // Name + badge (crown / robot)
     const wrap = document.createElement('div')
     wrap.className = 'user-name-wrap'
     const label = document.createElement('span')
-    label.className = 'user-label'
+    label.className = 'user-label' + (isBot ? ' glow-bot' : isAdmin ? ' glow-admin' : '')
     label.textContent = username === state.myName ? `${username} (คุณ)` : username
     wrap.appendChild(label)
-    if (isAdmin) {
+
+    if (isBot) {
+      const icon = document.createElement('span')
+      icon.className = 'bot-icon'
+      icon.textContent = '🤖'
+      wrap.appendChild(icon)
+    } else if (isAdmin) {
       const crown = document.createElement('span')
       crown.className = 'crown'
       crown.textContent = '👑'
@@ -38,14 +49,14 @@ export function updateUserList(users, bannedArr, sendFn) {
     }
     li.appendChild(wrap)
 
-    // Admin action buttons (kick / ban)
-    if (state.myIsAdmin && username !== state.myName && !isAdmin) {
+    // Admin action buttons only for real non-admin users
+    if (state.myIsAdmin && !isBot && username !== state.myName && !isAdmin) {
       li.appendChild(_makeActions(username, sendFn))
     }
 
-    // Online dot
+    // Indicator dot
     const dot = document.createElement('span')
-    dot.className = 'online-dot'
+    dot.className = isBot ? 'bot-dot' : 'online-dot'
     li.appendChild(dot)
 
     userListEl.appendChild(li)
@@ -66,7 +77,7 @@ function _updateBanned(arr, sendFn) {
 
   for (const username of arr) {
     const li = document.createElement('li')
-    li.appendChild(makeAvatar(username, 22))
+    li.appendChild(makeAvatar(username, 18))
 
     const nameEl = document.createElement('span')
     nameEl.className = 'banned-name'

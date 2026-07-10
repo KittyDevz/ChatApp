@@ -1,7 +1,7 @@
 import type { Server } from 'bun'
 import { join }         from 'path'
 import { ADMIN_KEY, PUBLIC_DIR } from './config'
-import { members, banned }       from './state'
+import { members, banned, bots } from './state'
 
 // ── Helpers ───────────────────────────────────────────────
 function json(data: object, status = 200): Response {
@@ -34,6 +34,9 @@ export async function fetchHandler(
     if (banned.has(lower))   return json({ error: 'banned' }, 403)
     for (const m of members) {
       if (m.username.toLowerCase() === lower) return json({ error: 'taken' }, 409)
+    }
+    for (const b of bots) {
+      if (b.username.toLowerCase() === lower) return json({ error: 'taken' }, 409)
     }
     return json({ ok: true })
   }

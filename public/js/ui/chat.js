@@ -16,17 +16,18 @@ export function appendSystem(text) {
   state.lastSender = ''
 }
 
-export function appendMessage({ username, isAdmin, text, at }) {
+export function appendMessage({ username, isAdmin, isBot = false, text, color = '', at }) {
   const ts = new Date(at).getTime()
   const isConsecutive = username === state.lastSender && (ts - state.lastTime) < 60_000
 
   const row = document.createElement('div')
-  row.className = 'msg-row' + (isConsecutive ? ' consecutive' : '')
+  const rowExtra = isBot ? ' is-bot' : isAdmin ? ' is-admin' : ''
+  row.className = 'msg-row' + (isConsecutive ? ' consecutive' : '') + rowExtra
 
   // Avatar
   const avatarWrap = document.createElement('div')
   avatarWrap.className = 'msg-avatar'
-  avatarWrap.appendChild(makeAvatar(username))
+  avatarWrap.appendChild(makeAvatar(username, 20, isAdmin, isBot))
 
   // Body
   const body = document.createElement('div')
@@ -36,12 +37,17 @@ export function appendMessage({ username, isAdmin, text, at }) {
   meta.className = 'msg-meta'
 
   const nameEl = document.createElement('span')
-  nameEl.className = 'msg-name'
-  nameEl.style.color = colorFor(username)
+  nameEl.className = 'msg-name' + (isBot ? ' glow-bot' : isAdmin ? ' glow-admin' : '')
+  if (!isBot && !isAdmin) nameEl.style.color = colorFor(username)
   nameEl.textContent = username + (username === state.myName ? ' (คุณ)' : '')
   meta.appendChild(nameEl)
 
-  if (isAdmin) {
+  if (isBot) {
+    const badge = document.createElement('span')
+    badge.className = 'bot-badge'
+    badge.textContent = 'BOT'
+    meta.appendChild(badge)
+  } else if (isAdmin) {
     const badge = document.createElement('span')
     badge.className = 'admin-badge'
     badge.textContent = 'ADMIN'
@@ -55,6 +61,7 @@ export function appendMessage({ username, isAdmin, text, at }) {
 
   const textEl = document.createElement('div')
   textEl.className = 'msg-text'
+  if (color && !isBot) textEl.style.color = color
   textEl.textContent = text
 
   body.append(meta, textEl)

@@ -1,0 +1,14 @@
+# Render Blueprint — free, no credit card required.
+# Deploy: push to GitHub, then New + > Blueprint > pick this repo.
+services:
+  - type: web
+    name: chat-server
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    # Render sets $PORT itself; Bun.serve reads it via config.ts.
+    envVars:
+      - key: ADMIN_KEY
+        sync: false        # set your own secret in the Render dashboard
+    healthCheckPath: /
+    autoDeploy: true       # redeploy on every push to the default branch

@@ -25,7 +25,7 @@ export function connect({ name, adminKey, onOpen, onClose }) {
   })
 
   ws.addEventListener('message', e => {
-    try { _route(JSON.parse(e.data)) } catch {}
+    try { _route(JSON.parse(e.data)) } catch (err) { console.error('[WS] route error:', err) }
   })
 
   ws.addEventListener('close', () => {
@@ -51,6 +51,12 @@ function _route(msg) {
 
     case 'welcome':
       state.myIsAdmin = msg.isAdmin
+      state.myIsDJ    = msg.isDJ ?? false
+      break
+
+    case 'dj_update':
+      state.myIsDJ = msg.isDJ ?? false
+      document.dispatchEvent(new CustomEvent('chat:djUpdate', { detail: msg }))
       break
 
     case 'system':
@@ -80,6 +86,14 @@ function _route(msg) {
     case 'banned':
       state.leavingIntentionally = true
       document.dispatchEvent(new CustomEvent('chat:banned'))
+      break
+
+    case 'bot_state':
+      document.dispatchEvent(new CustomEvent('chat:botState', { detail: msg }))
+      break
+
+    case 'music_state':
+      document.dispatchEvent(new CustomEvent('chat:musicState', { detail: msg }))
       break
   }
 }

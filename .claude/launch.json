@@ -7,6 +7,18 @@
       "runtimeArgs": ["run", "src/index.ts"],
       "port": 3002,
       "autoPort": true
+    },
+    {
+      "name": "wip-pd1-demo",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "5051", "--directory", "C:/Users/kk_45/Desktop/wip-pd1-demo"],
+      "port": 5051
+    },
+    {
+      "name": "repro",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "8123", "--directory", "C:/Users/kk_45/AppData/Local/Temp/claude/C--Users-kk-45-Desktop-chat-server/0b46960d-573f-4042-b4a8-69913d52d573/scratchpad/reprowww"],
+      "port": 8123
     }
   ]
 }

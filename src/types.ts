@@ -14,6 +14,7 @@ export interface Member {
 export interface UserInfo {
   username: string
   isAdmin:  boolean
+  isBot:    boolean
 }
 
 // Union of every payload the server can send to a client
